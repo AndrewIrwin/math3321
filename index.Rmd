@@ -10,7 +10,7 @@ widgets     : [mathjax]            # {mathjax, quiz, bootstrap}
 mode        : selfcontained # {standalone, draft}
 github:
   user:AndrewIrwin
-  repo:math3321
+  repo:math3321slides
 ---
 
 ## Load the data
