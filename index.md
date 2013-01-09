@@ -8,6 +8,9 @@ highlighter : highlight.js  # {highlight.js, prettify, highlight}
 hitheme     : tomorrow      # 
 widgets     : [mathjax]            # {mathjax, quiz, bootstrap}
 mode        : selfcontained # {standalone, draft}
+github:
+  user:AndrewIrwin
+  repo:math3321
 ---
 
 ## Load the data
