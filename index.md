@@ -10,9 +10,7 @@ widgets     : [mathjax]            # {mathjax, quiz, bootstrap}
 mode        : selfcontained # {standalone, draft}
 ---
 
-## Slide 2
-
-First, load the data from the author's web site.
+## Load the data
 
 
 
@@ -81,6 +79,7 @@ summary(babies)
 
 What are the units for bwt?
 
+---
 Why is "smoke" not just 0 or 1? Take a closer look
 
 
@@ -97,7 +96,7 @@ table(babies$smoke)
 
 
 
-The book doesn't tell me what those 9s are, but the website says it means smoking status is unknown. Replace them with NAs
+The book doesn't tell me what those 9s are, but the textbook website says it means smoking status is unknown. Replace them with NAs
 
 
 ```r
@@ -130,7 +129,10 @@ sd(babies$bwt)
 
 
 
-Is that the variance and standard deviation of the population (dividing by n) or the bias-corrected value for a sample (dividing by n-1)? Check by computing it yourself:
+Is that the variance and standard deviation of the population (dividing by n) or the bias-corrected value for a sample (dividing by n-1)? 
+
+---
+## Write your own var and sd functions to check with the built-in ones do:
 
 
 ```r
@@ -176,7 +178,7 @@ my.var(babies$bwt)/var(babies$bwt)
 
 
 ---
-Does the distribution of birth weights differ between smoking and non-smoking mothers? Here are two similar ways of doing the same thing. The "aggregate" methods has a nicer name and you can add other variables to the grouping list "by"
+Does the distribution of birth weights differ between smoking and non-smoking mothers? Here are two similar ways of doing the same thing. The "aggregate" method has a nicer name and you can add other variables to the grouping list "by"
 
 
 
@@ -202,6 +204,7 @@ aggregate(babies$bwt, by = list(babies$smoke), mean)
 
 
 
+---
 Here are some more aggregated results
 
 
@@ -229,20 +232,16 @@ aggregate(babies$bwt, by = list(babies$smoke), sd)
 
 
 ---
-### Qualitative summaries
+## Qualitative summaries
 
 Start with a histogram.
 
 
 ```r
-histogram(babies$bwt)
+hist(babies$bwt)
 ```
 
-```
-## Error: could not find function "histogram"
-```
-
-
+![plot of chunk unnamed-chunk-12](figure/unnamed-chunk-12.png) 
 
 
 ---
@@ -257,6 +256,17 @@ boxplot(babies)
 
 
 ---
+Fix that!
+
+
+```r
+boxplot(bwt ~ smoke, data = babies, xlab = "Smoker?", ylab = "Birth weight (oz)")
+```
+
+![plot of chunk unnamed-chunk-14](figure/unnamed-chunk-14.png) 
+
+
+---
 Compare smoking and non-smoking mothers side by side
 
 
@@ -266,7 +276,7 @@ hist(babies$bwt[babies$smoke == 0])
 hist(babies$bwt[babies$smoke == 1])
 ```
 
-![plot of chunk unnamed-chunk-14](figure/unnamed-chunk-14.png) 
+![plot of chunk unnamed-chunk-15](figure/unnamed-chunk-15.png) 
 
 ```r
 par(mfrow = c(1, 1))
@@ -276,16 +286,18 @@ par(mfrow = c(1, 1))
 
 
 ---
-Make the horizontal scale the same using ", xlim=range(babies$bwt)"
+Fix the scales and labels
 
 
 ```r
 par(mfrow = c(1, 2))
-hist(babies$bwt[babies$smoke == 0], xlim = range(babies$bwt))
-hist(babies$bwt[babies$smoke == 1], xlim = range(babies$bwt))
+hist(babies$bwt[babies$smoke == 0], xlim = range(babies$bwt), ylim = c(0, 
+    200), main = "Non-smokers", xlab = "Birth weight (oz)")
+hist(babies$bwt[babies$smoke == 1], xlim = range(babies$bwt), ylim = c(0, 
+    200), main = "Smokers", xlab = "Birth weight (oz)")
 ```
 
-![plot of chunk unnamed-chunk-15](figure/unnamed-chunk-15.png) 
+![plot of chunk unnamed-chunk-16](figure/unnamed-chunk-16.png) 
 
 ```r
 par(mfrow = c(1, 1))
@@ -303,15 +315,87 @@ qqnorm(babies$bwt)
 qqline(babies$bwt)
 ```
 
-![plot of chunk unnamed-chunk-16](figure/unnamed-chunk-16.png) 
+![plot of chunk unnamed-chunk-17](figure/unnamed-chunk-17.png) 
+
+
+---
+Compare the birth weight data to a uniform distribution
+
+
+```r
+u = runif(nrow(babies))
+qqplot(u, babies$bwt)
+```
+
+![plot of chunk unnamed-chunk-18](figure/unnamed-chunk-18.png) 
 
 
 ---
 ### Categories and tables
 
-table( cut (babies$bwt, c(0, 100, 150, 200, 500)), babies$smoke)
 
-xtabs()
+
+```r
+table(cut(babies$bwt, c(0, 100, 125, 150, 200)), babies$smoke)
+```
+
+```
+##            
+##               0   1
+##   (0,100]    62 111
+##   (100,125] 353 248
+##   (125,150] 289 113
+##   (150,200]  38  12
+```
+
+
+
+
+---
+### Define 'low birth weight' from histogram
+
+
+```r
+table(babies$bwt < 100, babies$smoke)
+```
+
+```
+##        
+##           0   1
+##   FALSE 686 384
+##   TRUE   56 100
+```
+
+
+
+
+---
+What about a different threshold?
+
+
+```r
+table(babies$bwt < 90, babies$smoke)
+```
+
+```
+##        
+##           0   1
+##   FALSE 717 444
+##   TRUE   25  40
+```
+
+```r
+table(babies$bwt < 120, babies$smoke)
+```
+
+```
+##        
+##           0   1
+##   FALSE 444 182
+##   TRUE  298 302
+```
+
+
 
 
 

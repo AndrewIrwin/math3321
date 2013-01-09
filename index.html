@@ -41,12 +41,10 @@
     <!-- SLIDES -->
       <slide class="" id="slide-1" style="background:;">
   <hgroup>
-    <h2>Slide 2</h2>
+    <h2>Load the data</h2>
   </hgroup>
   <article>
-    <p>First, load the data from the author&#39;s web site.</p>
-
-<pre><code class="r">babies = read.table(&quot;http://www.stat.berkeley.edu/users/statlabs/data/babiesI.data&quot;, 
+    <pre><code class="r">babies = read.table(&quot;http://www.stat.berkeley.edu/users/statlabs/data/babiesI.data&quot;, 
     header = TRUE)
 </code></pre>
 
@@ -107,7 +105,16 @@
 
 <p>What are the units for bwt?</p>
 
-<p>Why is &quot;smoke&quot; not just 0 or 1? Take a closer look</p>
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+      <slide class="" id="slide-4" style="background:;">
+  <hgroup>
+    
+  </hgroup>
+  <article>
+    <p>Why is &quot;smoke&quot; not just 0 or 1? Take a closer look</p>
 
 <pre><code class="r">table(babies$smoke)
 </code></pre>
@@ -117,7 +124,7 @@
 ## 742 484  10 
 </code></pre>
 
-<p>The book doesn&#39;t tell me what those 9s are, but the website says it means smoking status is unknown. Replace them with NAs</p>
+<p>The book doesn&#39;t tell me what those 9s are, but the textbook website says it means smoking status is unknown. Replace them with NAs</p>
 
 <pre><code class="r">babies$smoke = replace(babies$smoke, babies$smoke == 9, NA)
 </code></pre>
@@ -126,7 +133,7 @@
   <!-- Presenter Notes -->
 </slide>
 
-      <slide class="" id="slide-4" style="background:;">
+      <slide class="" id="slide-5" style="background:;">
   <hgroup>
     
   </hgroup>
@@ -145,9 +152,18 @@
 <pre><code>## [1] 18.24
 </code></pre>
 
-<p>Is that the variance and standard deviation of the population (dividing by n) or the bias-corrected value for a sample (dividing by n-1)? Check by computing it yourself:</p>
+<p>Is that the variance and standard deviation of the population (dividing by n) or the bias-corrected value for a sample (dividing by n-1)? </p>
 
-<pre><code class="r">my.var = function(x) mean((x - mean(x))^2)
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+      <slide class="" id="slide-6" style="background:;">
+  <hgroup>
+    <h2>Write your own var and sd functions to check with the built-in ones do:</h2>
+  </hgroup>
+  <article>
+    <pre><code class="r">my.var = function(x) mean((x - mean(x))^2)
 my.sd = function(x) sqrt(my.var(x))
 my.var(babies$bwt)
 </code></pre>
@@ -179,12 +195,12 @@ my.var(babies$bwt)
   <!-- Presenter Notes -->
 </slide>
 
-      <slide class="" id="slide-5" style="background:;">
+      <slide class="" id="slide-7" style="background:;">
   <hgroup>
     
   </hgroup>
   <article>
-    <p>Does the distribution of birth weights differ between smoking and non-smoking mothers? Here are two similar ways of doing the same thing. The &quot;aggregate&quot; methods has a nicer name and you can add other variables to the grouping list &quot;by&quot;</p>
+    <p>Does the distribution of birth weights differ between smoking and non-smoking mothers? Here are two similar ways of doing the same thing. The &quot;aggregate&quot; method has a nicer name and you can add other variables to the grouping list &quot;by&quot;</p>
 
 <pre><code class="r">tapply(babies$bwt, babies$smoke, mean)
 </code></pre>
@@ -201,7 +217,16 @@ my.var(babies$bwt)
 ## 2       1 114.1
 </code></pre>
 
-<p>Here are some more aggregated results</p>
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+      <slide class="" id="slide-8" style="background:;">
+  <hgroup>
+    
+  </hgroup>
+  <article>
+    <p>Here are some more aggregated results</p>
 
 <pre><code class="r">aggregate(babies$bwt, by = list(babies$smoke), summary)
 </code></pre>
@@ -223,24 +248,23 @@ my.var(babies$bwt)
   <!-- Presenter Notes -->
 </slide>
 
-      <slide class="" id="slide-6" style="background:;">
+      <slide class="" id="slide-9" style="background:;">
   <hgroup>
-    <h3>Qualitative summaries</h3>
+    <h2>Qualitative summaries</h2>
   </hgroup>
   <article>
     <p>Start with a histogram.</p>
 
-<pre><code class="r">histogram(babies$bwt)
+<pre><code class="r">hist(babies$bwt)
 </code></pre>
 
-<pre><code>## Error: could not find function &quot;histogram&quot;
-</code></pre>
+<p><img src="figure/unnamed-chunk-12.png" alt="plot of chunk unnamed-chunk-12"> </p>
 
   </article>
   <!-- Presenter Notes -->
 </slide>
 
-      <slide class="" id="slide-7" style="background:;">
+      <slide class="" id="slide-10" style="background:;">
   <hgroup>
     
   </hgroup>
@@ -256,7 +280,23 @@ my.var(babies$bwt)
   <!-- Presenter Notes -->
 </slide>
 
-      <slide class="" id="slide-8" style="background:;">
+      <slide class="" id="slide-11" style="background:;">
+  <hgroup>
+    
+  </hgroup>
+  <article>
+    <p>Fix that!</p>
+
+<pre><code class="r">boxplot(bwt ~ smoke, data = babies, xlab = &quot;Smoker?&quot;, ylab = &quot;Birth weight (oz)&quot;)
+</code></pre>
+
+<p><img src="figure/unnamed-chunk-14.png" alt="plot of chunk unnamed-chunk-14"> </p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+      <slide class="" id="slide-12" style="background:;">
   <hgroup>
     
   </hgroup>
@@ -268,27 +308,6 @@ hist(babies$bwt[babies$smoke == 0])
 hist(babies$bwt[babies$smoke == 1])
 </code></pre>
 
-<p><img src="figure/unnamed-chunk-14.png" alt="plot of chunk unnamed-chunk-14"> </p>
-
-<pre><code class="r">par(mfrow = c(1, 1))
-</code></pre>
-
-  </article>
-  <!-- Presenter Notes -->
-</slide>
-
-      <slide class="" id="slide-9" style="background:;">
-  <hgroup>
-    
-  </hgroup>
-  <article>
-    <p>Make the horizontal scale the same using &quot;, xlim=range(babies$bwt)&quot;</p>
-
-<pre><code class="r">par(mfrow = c(1, 2))
-hist(babies$bwt[babies$smoke == 0], xlim = range(babies$bwt))
-hist(babies$bwt[babies$smoke == 1], xlim = range(babies$bwt))
-</code></pre>
-
 <p><img src="figure/unnamed-chunk-15.png" alt="plot of chunk unnamed-chunk-15"> </p>
 
 <pre><code class="r">par(mfrow = c(1, 1))
@@ -298,7 +317,30 @@ hist(babies$bwt[babies$smoke == 1], xlim = range(babies$bwt))
   <!-- Presenter Notes -->
 </slide>
 
-      <slide class="" id="slide-10" style="background:;">
+      <slide class="" id="slide-13" style="background:;">
+  <hgroup>
+    
+  </hgroup>
+  <article>
+    <p>Fix the scales and labels</p>
+
+<pre><code class="r">par(mfrow = c(1, 2))
+hist(babies$bwt[babies$smoke == 0], xlim = range(babies$bwt), ylim = c(0, 
+    200), main = &quot;Non-smokers&quot;, xlab = &quot;Birth weight (oz)&quot;)
+hist(babies$bwt[babies$smoke == 1], xlim = range(babies$bwt), ylim = c(0, 
+    200), main = &quot;Smokers&quot;, xlab = &quot;Birth weight (oz)&quot;)
+</code></pre>
+
+<p><img src="figure/unnamed-chunk-16.png" alt="plot of chunk unnamed-chunk-16"> </p>
+
+<pre><code class="r">par(mfrow = c(1, 1))
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+      <slide class="" id="slide-14" style="background:;">
   <hgroup>
     
   </hgroup>
@@ -309,20 +351,91 @@ hist(babies$bwt[babies$smoke == 1], xlim = range(babies$bwt))
 qqline(babies$bwt)
 </code></pre>
 
-<p><img src="figure/unnamed-chunk-16.png" alt="plot of chunk unnamed-chunk-16"> </p>
+<p><img src="figure/unnamed-chunk-17.png" alt="plot of chunk unnamed-chunk-17"> </p>
 
   </article>
   <!-- Presenter Notes -->
 </slide>
 
-      <slide class="" id="slide-11" style="background:;">
+      <slide class="" id="slide-15" style="background:;">
+  <hgroup>
+    
+  </hgroup>
+  <article>
+    <p>Compare the birth weight data to a uniform distribution</p>
+
+<pre><code class="r">u = runif(nrow(babies))
+qqplot(u, babies$bwt)
+</code></pre>
+
+<p><img src="figure/unnamed-chunk-18.png" alt="plot of chunk unnamed-chunk-18"> </p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+      <slide class="" id="slide-16" style="background:;">
   <hgroup>
     <h3>Categories and tables</h3>
   </hgroup>
   <article>
-    <p>table( cut (babies$bwt, c(0, 100, 150, 200, 500)), babies$smoke)</p>
+    <pre><code class="r">table(cut(babies$bwt, c(0, 100, 125, 150, 200)), babies$smoke)
+</code></pre>
 
-<p>xtabs()</p>
+<pre><code>##            
+##               0   1
+##   (0,100]    62 111
+##   (100,125] 353 248
+##   (125,150] 289 113
+##   (150,200]  38  12
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+      <slide class="" id="slide-17" style="background:;">
+  <hgroup>
+    <h3>Define &#39;low birth weight&#39; from histogram</h3>
+  </hgroup>
+  <article>
+    <pre><code class="r">table(babies$bwt &lt; 100, babies$smoke)
+</code></pre>
+
+<pre><code>##        
+##           0   1
+##   FALSE 686 384
+##   TRUE   56 100
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+      <slide class="" id="slide-18" style="background:;">
+  <hgroup>
+    
+  </hgroup>
+  <article>
+    <p>What about a different threshold?</p>
+
+<pre><code class="r">table(babies$bwt &lt; 90, babies$smoke)
+</code></pre>
+
+<pre><code>##        
+##           0   1
+##   FALSE 717 444
+##   TRUE   25  40
+</code></pre>
+
+<pre><code class="r">table(babies$bwt &lt; 120, babies$smoke)
+</code></pre>
+
+<pre><code>##        
+##           0   1
+##   FALSE 444 182
+##   TRUE  298 302
+</code></pre>
 
   </article>
   <!-- Presenter Notes -->
