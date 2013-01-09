@@ -1,6 +1,6 @@
 ---
 title       : Chapter 1 explorations
-subtitle    : Maternal smotking and birth weight -- descriptive statistics
+subtitle    : Maternal smoking and birth weight -- descriptive statistics
 author      : Andrew Irwin
 job         : Math 3321
 framework   : io2012        # {io2012, html5slides, shower, dzslides, ...}
