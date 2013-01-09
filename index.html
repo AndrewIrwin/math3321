@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Chapter 1 explorations</title>
+  <meta charset="utf-8">
+  <meta name="description" content="Chapter 1 explorations">
+  <meta name="author" content="Andrew Irwin">
+  <meta name="generator" content="slidify" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <link rel="stylesheet" href="libraries/frameworks/io2012/css/default.css" media="all" >
+  <link rel="stylesheet" href="libraries/frameworks/io2012/phone.css" 
+    media="only screen and (max-device-width: 480px)" >
+  <link rel="stylesheet" href="libraries/frameworks/io2012/css/slidify.css" >
+  <link rel="stylesheet" href="libraries/highlighters/highlight.js/css/tomorrow.css" />
+  <base target="_blank"> <!-- This amazingness opens all links in a new tab. -->
+  <script data-main="libraries/frameworks/io2012/js/slides" 
+    src="libraries/frameworks/io2012/js/require-1.0.8.min.js">
+  </script>
+  
+    <link rel="stylesheet" href = "assets/css/ribbons.css">
+
+</head>
+<body style="opacity: 0">
+  <slides class="layout-widescreen">
+    
+    <!-- LOGO SLIDE -->
+    <!-- END LOGO SLIDE -->
+    
+
+    <!-- TITLE SLIDE -->
+    <!-- Should I move this to a Local Layout File? -->
+    <slide class="title-slide segue nobackground">
+      <hgroup class="auto-fadein">
+        <h1>Chapter 1 explorations</h1>
+        <h2>Maternal smotking and birth weight -- descriptive statistics</h2>
+        <p>Andrew Irwin<br/>Math 3321</p>
+      </hgroup>
+          </slide>
+
+    <!-- SLIDES -->
+      <slide class="" id="slide-1" style="background:;">
+  <hgroup>
+    <h2>Read-And-Delete</h2>
+  </hgroup>
+  <article>
+    <ol>
+<li>Edit YAML front matter</li>
+<li>Write using R Markdown</li>
+<li>Use an empty line followed by three dashes to separate slides!</li>
+</ol>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+      <slide class="class" id="id" style="background:;">
+  <hgroup>
+    <h2>Slide 2</h2>
+  </hgroup>
+  <article>
+    <p>First, load the data from the author&#39;s web site.</p>
+
+<pre><code class="r">babies = read.table(&quot;http://www.stat.berkeley.edu/users/statlabs/data/babiesI.data&quot;, 
+    header = TRUE)
+</code></pre>
+
+<p>Alternatively, download the file to your computer and load it from your disk</p>
+
+<pre><code class="r">babies = read.table(&quot;~/Desktop/babiesI.data&quot;, header = TRUE)
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+      <slide class="" id="slide-3" style="background:;">
+  <hgroup>
+    
+  </hgroup>
+  <article>
+    <p>Look at the top of the file to be sure it loaded okay:</p>
+
+<pre><code class="r">head(babies)
+</code></pre>
+
+<pre><code>##   bwt smoke
+## 1 120     0
+## 2 113     0
+## 3 128     1
+## 4 123     0
+## 5 108     1
+## 6 136     0
+</code></pre>
+
+<ul>
+<li>Question. What happens if you forget the &quot;header=TRUE&quot; part?</li>
+</ul>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+      <slide class="" id="slide-4" style="background:;">
+  <hgroup>
+    <h2>Quantitative summaries</h2>
+  </hgroup>
+  <article>
+    <p>Get a summary of the data:</p>
+
+<pre><code class="r">summary(babies)
+</code></pre>
+
+<pre><code>##       bwt          smoke      
+##  Min.   : 55   Min.   :0.000  
+##  1st Qu.:109   1st Qu.:0.000  
+##  Median :120   Median :0.000  
+##  Mean   :120   Mean   :0.464  
+##  3rd Qu.:131   3rd Qu.:1.000  
+##  Max.   :176   Max.   :9.000  
+</code></pre>
+
+<p>What are the units for bwt?</p>
+
+<p>Why is &quot;smoke&quot; not just 0 or 1? Take a closer look</p>
+
+<pre><code class="r">table(babies$smoke)
+</code></pre>
+
+<pre><code>## 
+##   0   1   9 
+## 742 484  10 
+</code></pre>
+
+<p>The book doesn&#39;t tell me what those 9s are, but the website says it means smoking status is unknown. Replace them with NAs</p>
+
+<pre><code class="r">babies$smoke = replace(babies$smoke, babies$smoke == 9, NA)
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+      <slide class="" id="slide-5" style="background:;">
+  <hgroup>
+    
+  </hgroup>
+  <article>
+    <p>Summary computes the mean, median, quartiles, min, max, but not the variance or standard deviation:</p>
+
+<pre><code class="r">var(babies$bwt)
+</code></pre>
+
+<pre><code>## [1] 332.6
+</code></pre>
+
+<pre><code class="r">sd(babies$bwt)
+</code></pre>
+
+<pre><code>## [1] 18.24
+</code></pre>
+
+<p>Is that the variance and standard deviation of the population (dividing by n) or the bias-corrected value for a sample (dividing by n-1)? Check by computing it yourself:</p>
+
+<pre><code class="r">my.var = function(x) mean((x - mean(x))^2)
+my.sd = function(x) sqrt(my.var(x))
+my.var(babies$bwt)
+</code></pre>
+
+<pre><code>## [1] 332.3
+</code></pre>
+
+<pre><code class="r">my.sd(babies$bwt)
+</code></pre>
+
+<pre><code>## [1] 18.23
+</code></pre>
+
+<p>So it&#39;s the bias corrected value, off by a factor of \((n-1)/n\) which can be confirmed by computing the ratio of the two variances</p>
+
+<pre><code class="r">(nrow(babies) - 1)/nrow(babies)
+</code></pre>
+
+<pre><code>## [1] 0.9992
+</code></pre>
+
+<pre><code class="r">my.var(babies$bwt)/var(babies$bwt)
+</code></pre>
+
+<pre><code>## [1] 0.9992
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+      <slide class="" id="slide-6" style="background:;">
+  <hgroup>
+    
+  </hgroup>
+  <article>
+    <p>Does the distribution of birth weights differ between smoking and non-smoking mothers? Here are two similar ways of doing the same thing. The &quot;aggregate&quot; methods has a nicer name and you can add other variables to the grouping list &quot;by&quot;</p>
+
+<pre><code class="r">tapply(babies$bwt, babies$smoke, mean)
+</code></pre>
+
+<pre><code>##     0     1 
+## 123.0 114.1 
+</code></pre>
+
+<pre><code class="r">aggregate(babies$bwt, by = list(babies$smoke), mean)
+</code></pre>
+
+<pre><code>##   Group.1     x
+## 1       0 123.0
+## 2       1 114.1
+</code></pre>
+
+<p>Here are some more aggregated results</p>
+
+<pre><code class="r">aggregate(babies$bwt, by = list(babies$smoke), summary)
+</code></pre>
+
+<pre><code>##   Group.1 x.Min. x.1st Qu. x.Median x.Mean x.3rd Qu. x.Max.
+## 1       0     55       113      123    123       134    176
+## 2       1     58       102      115    114       126    163
+</code></pre>
+
+<pre><code class="r">aggregate(babies$bwt, by = list(babies$smoke), sd)
+</code></pre>
+
+<pre><code>##   Group.1    x
+## 1       0 17.4
+## 2       1 18.1
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+      <slide class="" id="slide-7" style="background:;">
+  <hgroup>
+    <h3>Qualitative summaries</h3>
+  </hgroup>
+  <article>
+    <p>Start with a histogram.</p>
+
+<pre><code class="r">histogram(babies$bwt)
+</code></pre>
+
+<pre><code>## Error: could not find function &quot;histogram&quot;
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+      <slide class="" id="slide-8" style="background:;">
+  <hgroup>
+    
+  </hgroup>
+  <article>
+    <p>Then try a boxplot</p>
+
+<pre><code class="r">boxplot(babies)
+</code></pre>
+
+<p><img src="figure/unnamed-chunk-13.png" alt="plot of chunk unnamed-chunk-13"> </p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+      <slide class="" id="slide-9" style="background:;">
+  <hgroup>
+    
+  </hgroup>
+  <article>
+    <p>Compare smoking and non-smoking mothers side by side</p>
+
+<pre><code class="r">par(mfrow = c(1, 2))
+hist(babies$bwt[babies$smoke == 0])
+hist(babies$bwt[babies$smoke == 1])
+</code></pre>
+
+<p><img src="figure/unnamed-chunk-14.png" alt="plot of chunk unnamed-chunk-14"> </p>
+
+<pre><code class="r">par(mfrow = c(1, 1))
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+      <slide class="" id="slide-10" style="background:;">
+  <hgroup>
+    
+  </hgroup>
+  <article>
+    <p>Make the horizontal scale the same using &quot;, xlim=range(babies$bwt)&quot;</p>
+
+<pre><code class="r">par(mfrow = c(1, 2))
+hist(babies$bwt[babies$smoke == 0], xlim = range(babies$bwt))
+hist(babies$bwt[babies$smoke == 1], xlim = range(babies$bwt))
+</code></pre>
+
+<p><img src="figure/unnamed-chunk-15.png" alt="plot of chunk unnamed-chunk-15"> </p>
+
+<pre><code class="r">par(mfrow = c(1, 1))
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+      <slide class="" id="slide-11" style="background:;">
+  <hgroup>
+    
+  </hgroup>
+  <article>
+    <p>What do quantile plots show?</p>
+
+<pre><code class="r">qqnorm(babies$bwt)
+qqline(babies$bwt)
+</code></pre>
+
+<p><img src="figure/unnamed-chunk-16.png" alt="plot of chunk unnamed-chunk-16"> </p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+      <slide class="" id="slide-12" style="background:;">
+  <hgroup>
+    <h3>Categories and tables</h3>
+  </hgroup>
+  <article>
+    <p>table( cut (babies$bwt, c(0, 100, 150, 200, 500)), babies$smoke)</p>
+
+<p>xtabs()</p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+    <slide class="backdrop"></slide>
+  </slides>
+
+  <!--[if IE]>
+    <script 
+      src="http://ajax.googleapis.com/ajax/libs/chrome-frame/1/CFInstall.min.js">  
+    </script>
+    <script>CFInstall.check({mode: 'overlay'});</script>
+  <![endif]-->
+</body>
+<!-- Grab CDN jQuery, fall back to local if offline -->
+<script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.7.min.js"></script>
+<script>window.jQuery || document.write('<script src="libraries/widgets/quiz/js/jquery-1.7.min.js"><\/script>')</script>
+<!-- Load Javascripts for Widgets -->
+<!-- MathJax: Fall back to local if CDN offline but local image fonts are not supported (saves >100MB) -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [['$','$'], ['\\(','\\)']],
+      processEscapes: true
+    }
+  });
+</script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/2.0-latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<!-- <script src="https://c328740.ssl.cf1.rackcdn.com/mathjax/2.0-latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script> -->
+<script>window.MathJax || document.write('<script type="text/x-mathjax-config">MathJax.Hub.Config({"HTML-CSS":{imageFont:null}});<\/script><script src="libraries/widgets/mathjax/MathJax.js?config=TeX-AMS-MML_HTMLorMML"><\/script>')
+</script>
+<!-- LOAD HIGHLIGHTER JS FILES -->
+<script src="libraries/highlighters/highlight.js/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+<!-- DONE LOADING HIGHLIGHTER JS FILES -->
+</html>
